@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visual Studio Code</title>
+  <style>
+    :root {
+      --bg: #0e1116;
+      --panel: #141922;
+      --line: rgba(255,255,255,0.08);
+      --text: #e6edf3;
+      --muted: #9aa4b2;
+      --accent: #4aa3ff;
+      --accent-2: #6fb6ff;
+      --good: #42d392;
+      --max: 1120px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(74,163,255,.12), transparent 22%),
+        linear-gradient(180deg, #0b0f14 0%, var(--bg) 100%);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    .container {
+      width: min(100% - 32px, var(--max));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(11,15,20,.75);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 14px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #4aa3ff, #7a5cff);
+      box-shadow: 0 8px 22px rgba(74,163,255,.25);
+    }
+
+    nav {
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+
+    nav a:hover { color: var(--text); }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 11px 16px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.02);
+      font-weight: 700;
+      font-size: .95rem;
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, var(--accent), #5b8cff);
+      color: #07111f;
+      border-color: transparent;
+    }
+
+    .hero {
+      padding: 52px 0 28px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.02fr .98fr;
+      gap: 26px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 14px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(74,163,255,.1);
+      border: 1px solid rgba(74,163,255,.16);
+      color: #b7dbff;
+      font-size: .9rem;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.7rem, 5vw, 5rem);
+      line-height: .98;
+      letter-spacing: -1.5px;
+      max-width: 11ch;
+    }
+
+    .subhead {
+      margin: 18px 0 22px;
+      max-width: 58ch;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .tiny-note {
+      color: var(--muted);
+      font-size: .92rem;
+    }
+
+    .preview-card,
+    .card,
+    .callout,
+    .download-box {
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+    }
+
+    .preview-card {
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,.3);
+    }
+
+    .preview-top {
+      display: flex;
+      gap: 8px;
+      padding: 13px 16px;
+      background: rgba(255,255,255,.03);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot:nth-child(1) { background: #ff5f57; }
+    .dot:nth-child(2) { background: #febc2e; }
+    .dot:nth-child(3) { background: #28c840; }
+
+    .preview-body {
+      padding: 16px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .mock-editor {
+      min-height: 250px;
+      padding: 16px;
+      border-radius: 18px;
+      background: #0a0f15;
+      border: 1px solid rgba(255,255,255,.08);
+      font-family: Consolas, monospace;
+      font-size: .92rem;
+      color: #d7e7ff;
+    }
+
+    .dim { color: #7f8da2; }
+    .blue { color: var(--accent-2); }
+    .green { color: var(--good); }
+    .pink { color: #ff89c6; }
+
+    .mini-grid,
+    .three-grid,
+    .stats {
+      display: grid;
+      gap: 12px;
+    }
+
+    .mini-grid { grid-template-columns: repeat(2, 1fr); }
+    .three-grid { grid-template-columns: repeat(3, 1fr); }
+    .stats { grid-template-columns: repeat(3, 1fr); }
+
+    .mini,
+    .card,
+    .stat {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--line);
+    }
+
+    .section {
+      padding: 34px 0;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: end;
+      margin-bottom: 16px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: 1.8rem;
+      letter-spacing: -.5px;
+    }
+
+    .section-head p,
+    .card p,
+    .callout p,
+    .mini span,
+    .stat span {
+      color: var(--muted);
+    }
+
+    .icon {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      margin-bottom: 14px;
+      background: rgba(74,163,255,.12);
+      border: 1px solid rgba(74,163,255,.14);
+      font-size: 1.1rem;
+    }
+
+    .card h3,
+    .callout h3,
+    .mini strong {
+      margin: 0 0 10px;
+    }
+
+    .callout {
+      padding: 22px;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: .98fr 1.02fr;
+      gap: 16px;
+    }
+
+    .checklist {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .checklist li::before {
+      content: "✓";
+      color: var(--good);
+      margin-right: 10px;
+      font-weight: 700;
+    }
+
+    .download-box {
+      padding: 18px;
+    }
+
+    .download-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    footer {
+      padding: 30px 0 38px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: .92rem;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .notice {
+      padding: 12px 0 0;
+      color: #cfe2ff;
+      font-size: .94rem;
+    }
+
+    .notice a {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    @media (max-width: 960px) {
+      .hero-grid,
+      .split,
+      .three-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section-head,
+      .topbar-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .mini-grid,
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .hero { padding-top: 40px; }
+      h1 { max-width: 12ch; }
+      .mock-editor { min-height: 220px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container">
+      <div class="topbar-inner">
+        <a class="brand" href="#home">
+          <span class="brand-mark"></span>
+          <span>Visual Studio Code</span>
+        </a>
+
+        <nav>
+          <a href="#docs">Docs</a>
+          <a href="#updates">Updates</a>
+          <a href="#blog">Blog</a>
+          <a href="#api">API</a>
+          <a href="#extensions">Extensions</a>
+        </nav>
+
+        <a class="btn" href="#download">Download</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="home" class="container">
+    <div class="notice">
+      <a href="#blog">Agentic development</a> is now part of the workflow.
+    </div>
+
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow">Open source editor for real work</div>
+          <h1>The code editor that stays out of your way.</h1>
+          <p class="subhead">
+            A VS Code–style landing page rebuilt in plain HTML and CSS, with a professional look,
+            simple hierarchy, and just enough rough edges to feel human.
+          </p>
+          <div class="hero-actions">
+            <a class="btn primary" href="#download">Download for Windows</a>
+            <a class="btn" href="#download">Download for macOS</a>
+          </div>
+          <div class="tiny-note">Also available for Linux. By using it, you agree to the license and privacy terms.</div>
+        </div>
+
+        <div class="preview-card">
+          <div class="preview-top">
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          </div>
+          <div class="preview-body">
+            <div class="mock-editor">
+              <div><span class="dim">$</span> <span class="green">npm</span> install</div>
+              <div><span class="dim">→</span> workspace ready in <span class="blue">11s</span></div>
+              <br />
+              <div><span class="pink">#</span> clean interface</div>
+              <div><span class="pink">#</span> quick navigation</div>
+              <div><span class="pink">#</span> extension friendly</div>
+              <br />
+              <div class="dim">/* small, practical landing page mockup */</div>
+            </div>
+            <div class="mini-grid">
+              <div class="mini"><strong>Fast</strong><span>Lightweight layout with direct messaging.</span></div>
+              <div class="mini"><strong>Flexible</strong><span>Easy to edit for a GitHub portfolio repo.</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="download" class="section">
+      <div class="section-head">
+        <div>
+          <h2>Download options</h2>
+          <p>Keep the visual structure familiar without copying the official page pixel-for-pixel.</p>
+        </div>
+      </div>
+      <div class="download-box">
+        <div class="download-bar">
+          <a class="btn primary" href="#">Download for Windows</a>
+          <a class="btn" href="#">Download for macOS</a>
+          <a class="btn" href="#">Linux (.deb)</a>
+          <a class="btn" href="#">Linux (.rpm)</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <h2>Why it works</h2>
+          <p>Looks close to the original mood, but the code is still your own project.</p>
+        </div>
+      </div>
+      <div class="three-grid">
+        <article class="card"><div class="icon">⚡</div><h3>Quick setup</h3><p>Simple structure, easy to scan, and not overloaded with effects.</p></article>
+        <article class="card"><div class="icon">🧠</div><h3>Developer feel</h3><p>Uses familiar labels and a clean hierarchy that fits a GitHub repo.</p></article>
+        <article class="card"><div class="icon">🧩</div><h3>Easy to tweak</h3><p>Plain HTML and CSS means you can change everything fast.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="split">
+        <div class="callout">
+          <h3>Built for GitHub, not perfection</h3>
+          <p>
+            Kept clean, but not over-produced. That usually sells better for a student portfolio than a
+            too-perfect clone.
+          </p>
+          <ul class="checklist">
+            <li>Dark theme</li>
+            <li>Responsive layout</li>
+            <li>Human-looking copy</li>
+            <li>Original rebuild</li>
+          </ul>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><strong>01</strong><span>Hero section</span></div>
+          <div class="stat"><strong>05</strong><span>Nav items</span></div>
+          <div class="stat"><strong>100%</strong><span>Plain HTML/CSS</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="section">
+      <div class="section-head">
+        <div>
+          <h2>Small FAQ</h2>
+          <p>Enough content to make the page feel less empty.</p>
+        </div>
+      </div>
+      <div class="three-grid">
+        <article class="card"><h3>Is this exact?</h3><p>No. It is an original rebuild inspired by the official homepage.</p></article>
+        <article class="card"><h3>Can I use it?</h3><p>Yes. Change the text, add your details, and push it to GitHub.</p></article>
+        <article class="card"><h3>Needs JS?</h3><p>No. It is a single HTML file with internal CSS only.</p></article>
+      </div>
+    </section>
+
+    <section id="docs" class="section" style="padding-bottom: 46px;">
+      <div class="callout">
+        <h3>Docs, updates, blog, API, extensions</h3>
+        <p>Those links are there so the header feels closer to the original page without being a copy.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <div>Visual Studio Code inspired landing page.</div>
+      <div>Built in plain HTML and CSS.</div>
+    </div>
+  </footer>
+</body>
+</html>
