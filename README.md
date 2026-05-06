@@ -8,6 +8,7 @@ A responsive landing page inspired by the official Visual Studio Code website, b
 - Dark theme design
 - Smooth scrolling experience
 - Structured sections (Navbar, Hero, Features, Footer)
+- created using plain html and css
 
 ## 📸 Screenshot
 ![Preview](screenshot.png)
